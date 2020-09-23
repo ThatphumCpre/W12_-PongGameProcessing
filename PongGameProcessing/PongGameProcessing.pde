@@ -30,9 +30,6 @@ class Ball {
     if (positionY < 0  || positionY > height) { //bounce on Top
       speedY *= -1;    //invert speed
     }
-    if (positionX < 0  || positionX > width) { //bounce on Top
-      speedX *= -1;    //invert speed
-    }
   }      
 
   float getPositionX() {
@@ -46,7 +43,8 @@ class Ball {
   void setPositionY(int y) {
   }      //Set positionY of ball
   void setSpeedX(float factor) {
-  }  //Multiply Speed of ball by input 
+    speedX = factor*speedX; //multiply speed by factor
+  } 
   void defaultSet() {
   }              //Set Ball to Start point
 }
@@ -63,7 +61,10 @@ class Paddle {
     score = 0;    //start score for each player
   } 
   void bounce() {
-  }                 //Make target Ball bounce
+    if ( positionX+50 > objectBall.getPositionX()  && positionY < objectBall.getPositionY() && positionY+200 > objectBall.getPositionY() && positionX < objectBall.getPositionX() ) {
+      objectBall.setSpeedX(-1.5);
+    }
+  }                
   void drawPaddle() {
     rect(positionX, positionY, 50, 200);  //draw a Paddle
   }            
@@ -99,14 +100,18 @@ class PongGame {
   }        
   void update() {
     pongBall.move();         //Move the Ball
-    if( mousePressed) {                         //if mouse press
+    if ( mousePressed) {                         //if mouse press
       if (mouseX < width/2) {                   //and player 1 zone move player'1Paddle
-      player1.addPositionY(mouseY-pastMouse);
-      }
-      else{
-       player2.addPositionY(mouseY-pastMouse);  //if player 2 zone move player'2 Paddle
+        player1.addPositionY(mouseY-pastMouse);
+      } else {
+        player2.addPositionY(mouseY-pastMouse);  //if player 2 zone move player'2 Paddle
       }
     }
+
+    player2.bounce();        //bounce player2 Paddle when ball on player2 side
+
+    player1.bounce();        //bounce player1 Paddle when ball on player2 side
+
     pastMouse = mouseY;      //collect position of mouse
   }              
   void serveBall(int factor) {
